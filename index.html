@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CINECORE — Filmmaking & Production Operating System</title>
+    <meta name="description" content="Professional filmmaking operating system for writers, showrunners, and producers. Idea to delivery.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase Modular SDK Import Map for native ES Modules -->
+    <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js",
+        "firebase/storage": "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js",
+        "firebase/app-check": "https://www.gstatic.com/firebasejs/10.14.1/firebase-app-check.js"
+      }
+    }
+    </script>
+</head>
+<body data-theme="midnight">
+    <div id="app-root" class="app-root">
+        <!-- Global Top Bar -->
+        <header id="app-topbar" class="app-topbar"></header>
+
+        <!-- Main Body (Sidebar + Content Workspace) -->
+        <div class="app-shell-body">
+            <aside id="app-sidebar" class="app-sidebar"></aside>
+            <main id="app-content" class="app-content" role="main"></main>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Main ES Module Bootstrap -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

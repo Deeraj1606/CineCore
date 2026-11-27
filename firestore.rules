@@ -1,0 +1,87 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUser(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function getProjectData(projectId) {
+      return get(/databases/$(database)/documents/projects/$(projectId)).data;
+    }
+
+    function isProjectOwner(projectId) {
+      return isAuthenticated() && getProjectData(projectId).ownerId == request.auth.uid;
+    }
+
+    function isProjectMember(projectId) {
+      return isAuthenticated() && (
+        getProjectData(projectId).ownerId == request.auth.uid ||
+        (getProjectData(projectId).members != null && getProjectData(projectId).members[request.auth.uid] != null)
+      );
+    }
+
+    function getProjectRole(projectId) {
+      return isProjectOwner(projectId) ? 'owner' : getProjectData(projectId).members[request.auth.uid].role;
+    }
+
+    function canReadProject(projectId) {
+      return isProjectMember(projectId);
+    }
+
+    function canEditProject(projectId) {
+      return isProjectOwner(projectId) || (
+        isProjectMember(projectId) && (getProjectRole(projectId) == 'owner' || getProjectRole(projectId) == 'editor')
+      );
+    }
+
+    // 1. User Profiles & Preferences
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isUser(userId);
+    }
+
+    // 2. Projects Collection
+    match /projects/{projectId} {
+      // Members and owners can read project metadata
+      allow read: if isAuthenticated() && canReadProject(projectId);
+
+      // Authenticated users can create a project where they are set as owner
+      allow create: if isAuthenticated() && 
+        request.resource.data.ownerId == request.auth.uid &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() > 0 &&
+        request.resource.data.name.size() <= 100;
+
+      // Only owners can modify membership, delete, or change ownership
+      // Editors can update name, logline, genre, status, but cannot alter members or ownerId
+      allow update: if isAuthenticated() && (
+        isProjectOwner(projectId) || (
+          canEditProject(projectId) &&
+          request.resource.data.ownerId == resource.data.ownerId &&
+          request.resource.data.members == resource.data.members
+        )
+      );
+
+      // Only the project owner can delete the project
+      allow delete: if isAuthenticated() && isProjectOwner(projectId);
+
+      // 3. Project-scoped Entities & Documents Subcollections
+      // (Screenplays, Scenes, Characters, Locations, Shots, Schedules, CallSheets, Tasks, etc.)
+      match /{subcollection}/{docId} {
+        allow read: if isAuthenticated() && canReadProject(projectId);
+        allow write: if isAuthenticated() && canEditProject(projectId);
+      }
+    }
+
+    // Default deny for all other paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

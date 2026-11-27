@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables & local credentials
+.env
+.env.local
+.env.*.local
+service-account*.json
+firebase-debug.log*
+firestore-debug.log*
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

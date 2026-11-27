@@ -1,0 +1,22 @@
+{
+  "name": "cinecore-writer",
+  "version": "2.0.0",
+  "description": "Professional, fast, distraction-free screenplay writer built with Vanilla JS ES Modules, IndexedDB, Web Workers, and CSS Custom Properties.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "screenplay",
+    "screenwriting",
+    "writer",
+    "script",
+    "fountain",
+    "editor"
+  ],
+  "author": "Cinecore",
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^13.0.0",
+    "jsdom": "^30.1.1"
+  }
+}
